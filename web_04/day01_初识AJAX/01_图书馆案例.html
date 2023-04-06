@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+
+<body>
+    <!-- 添加图书的Panel面板 -->
+    <div class="panel panel-primary">
+        <!-- <div class="panel-heading">
+            <h3 class="panel-title">添加新图书</h3>
+        </div> -->
+        <div class="panel-body form-inline">
+
+            <div class="input-group">
+                <div class="input-group-addon">书名</div>
+                <input type="text" class="form-control" id="iptBookname" placeholder="请输入书名">
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-addon">作者</div>
+                <input type="text" class="form-control" id="iptAuthor" placeholder="请输入作者">
+            </div>
+
+            <div class="input-group">
+                <div class="input-group-addon">出版社</div>
+                <input type="text" class="form-control" id="iptPublisher" placeholder="请输入出版社">
+            </div>
+            <button id="select" class="btn btn-primary">查询</button>
+            <button id="btnAdd" class="btn btn-primary">添加</button>
+        </div>
+    </div>
+    <!-- 图书的表格 -->
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>书名</th>
+                <th>作者</th>
+                <th>出版社</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="tb"></tbody>
+    </table>
+    <!-- 目标：使用ajax技术，在代码中获取到图书列表数据
+    技术：axios网络请求的库
+    做法 1.先引入axios.js文件 
+        2.准备标签的样式(一行的)
+        3.准备数据(以前固定的，现在有url可以axios获取
+        4.数据渲染到页面上(一个对象对应一个tr))-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        axios({
+            url: 'http://www.liulongbin.top:3006/api/getbooks',//请求地址
+            method: 'GET',  //请求方式
+        }).then((result) => {//.then接受结果
+            setList(result)
+        })
+
+        /*
+         * 筛选功能
+         * 表单内按钮 会产生默认行为 默认提交到当前页面，走不完点击事件
+         * 思路：
+         *      1.给筛选按钮绑定点击事件
+         *      2.获取输入框的内容
+         *      3.把参数传递给后台，返回筛选结果
+         *      4.判断输入框有值，形参参数对象
+         *      5.渲染页面
+         */
+        document.querySelector('#select').addEventListener('click', e => {
+            e.preventDefault()
+            let bookname = document.querySelector('#iptBookname').value
+            let author = document.querySelector('#iptAuthor').value
+            let publisher = document.querySelector('#iptPublisher').value
+            let queryObj = {}
+            if (bookname) {
+                queryObj.bookname = bookname
+            }
+            if (author) {
+                queryObj.author = author
+            }
+            if (publisher) {
+                queryObj.publisher = publisher
+            }
+            axios({
+                url: 'http://www.liulongbin.top:3006/api/getbooks',
+                method: 'GET',
+                params: queryObj
+            }).then((result) => {//.then接受结果
+                setList(result)
+            })
+
+        })
+
+        /*
+           * 添加功能
+           * 表单内按钮 会产生默认行为 默认提交到当前页面，走不完点击事件
+           * 思路：
+           *      1.给筛选按钮绑定点击事件
+           *      2.获取输入框的内容
+           *      3.把参数传递给后台，返回筛选结果
+           *      4.判断输入框有值，没有输入就报错
+           *      5.渲染页面
+           */
+        document.querySelector('#btnAdd').addEventListener('click', e => {
+            e.preventDefault()
+            let bookname = document.querySelector('#iptBookname').value
+            let author = document.querySelector('#iptAuthor').value
+            let publisher = document.querySelector('#iptPublisher').value
+            if (!(bookname && author && publisher)) {
+                alert('输入不能为空')
+            }
+            axios({
+                url: 'http://www.liulongbin.top:3006/api/addbook',
+                method: 'POST',
+                data: {
+                    bookname: bookname,
+                    author: author,
+                    publisher: publisher
+                }
+            }).then(() => {//.then接受结果
+                //删除成功。重新调用列表接口。从服务器拿到所有数据铺设
+                axios({
+                    url: 'http://www.liulongbin.top:3006/api/getbooks',//请求地址
+                    method: 'GET',  //请求方式
+                }).then((result) => {//.then接受结果
+                    setList(result)
+                })
+            })
+
+        })
+
+        /*
+               * 删除功能
+               * 表单内按钮 会产生默认行为 默认提交到当前页面，走不完点击事件
+               * 思路：
+               *      1.给删除按钮绑定点击事件
+               *      2.获取输入框的内容
+               *      3.把参数传递给后台，返回筛选结果
+               *      4.判断输入框有值，没有输入就报错
+               *      5.渲染页面
+               * 
+               * 标签是后面创建，不能直接u后去表格删除按钮
+               * 解决 如何获取动态创建的标签绑定点击事件 ==>动态委托
+               * 委托给已存在的父级标签来绑定，然后通过.target拿到真正触发事件的标签
+               */
+        document.querySelector('tbody').addEventListener('click', e => {
+            let delBtn = e.target
+            console.log(delBtn);
+            if (delBtn.tagName === 'BUTTON') {
+                // 可以用dataset提前绑定/通过标签关系找到tr第一个子标签获取内容
+                let theId = delBtn.parentNode.parentNode.children[0].innerHTML
+                axios({
+                    url: 'http://www.liulongbin.top:3006/api/delbook',
+                    method: 'DELETE',
+                    params: {
+                        id: theId
+                    }
+                }).then((result) => {
+                    if (result.data.status === 500) return alert('删除失败')
+                    axios({
+                        url: 'http://www.liulongbin.top:3006/api/getbooks',//请求地址
+                        method: 'GET',  //请求方式
+                    }).then((result) => {//.then接受结果
+                        setList(result)
+                    })
+                })
+            }
+        })
+
+
+
+        function setList(result) {
+            console.log(result);
+            let allStr = ''
+            result.data.data.forEach(obj => {
+                let trStr = `
+                <tr>
+                    <th scope="row">${obj.id}</td>
+                    <td>${obj.bookname}</td>
+                    <td>${obj.author}</td>
+                    <td>${obj.publisher}</td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-smbtn-del">删除</button>
+                    </td>
+                </tr>
+                `
+                allStr += trStr
+            })
+            document.querySelector('tbody').innerHTML = allStr
+        }
+    </script>
+</body>
+
+</html>

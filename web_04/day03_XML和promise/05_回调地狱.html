@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function myAjax(url, fn) {
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', url)
+            xhr.send()
+            return xhr.addEventListener('load', () => {
+                let result = JSON.parse(xhr.response)
+                fn(result)
+            })
+        }
+        myAjax('http://www.liulongbin.top:3006/api/getbooks', (res) => { console.log(res); })
+        myAjax('http://www.liulongbin.top:3006/api/getbooks?bookname=西游记', (res) => { console.log(res); })
+    // 回调地狱：回调函数中还嵌套着回调函数
+    // 回调地狱不方便阅读和修改
+    </script>
+</body>
+
+</html>

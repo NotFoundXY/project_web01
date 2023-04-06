@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        async function myFn() {
+            axios.defaults.baseURL = 'url'
+            const { data: res } = await axios({
+                url: 'url',
+
+            })
+            // 循环每个一级分类的对象，产生一个二级分类请求的promise对象
+            const resultArr = res.data.map(obj => {
+                //二级分类数据
+                return axios({
+                    url: 'url',
+                    params: {
+                        id: obj.id
+                    }
+                })
+            })
+            // resultArr是【二级分类请求的Promise对象 二级分类请求Promise小对象】
+            //合并成大的
+            const result = await Promise.all(resultArr)
+            //result 值  [请求成功的结果,请求成功的结果,...]
+            result.forEach(axiosResultObj => {
+                let obj = axiosResultObj.data.data
+                document.querySelector('.top').innerHTML += 'ul'
+            })
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function myAjax(url, fn) {
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', url)
+            xhr.send()
+            return xhr.addEventListener('load', () => {
+                let result = JSON.parse(xhr.response)
+                // 当return不出去的时候 解决方法 回调函数(在异步任务内)，可以通过他把结果带出来
+                // console.log(result);
+                fn(result)
+            })
+        }
+        myAjax('http://www.liulongbin.top:3006/api/getbooks', (res) => { console.log(res); })
+        myAjax('http://www.liulongbin.top:3006/api/getbooks?bookname=西游记', (res) => { console.log(res); })
+        // 问题：打印时间不一定
+        // 原因：
+        // 前端：myajax方法里调用额时Ajax异步代码 不会阻塞主线程继续往下走，他会让浏览器发起请求
+        // 后端：响应查询结果并返回 需要事件-查询数据库的时间
+
+    </script>
+</body>
+
+</html>

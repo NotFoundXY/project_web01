@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // promise：ES6新出的的构造函数 用来解决回调地狱
+        // 语法：
+        // let 变量=new Promise((resove,reject)=>{
+        // resolve和reject时promise提供的两个函数
+        // 写一些同步/异步代码
+        // resolve('成功的结果')
+        // reject('拒绝的结果')
+        // })
+        // 变量.then(res=>{
+        // 接受此Promise对象内 返回出来的成功结果
+        // }).catch(err=>{
+        // 接受此Promise对象内 返回出来的失败结果
+        // })
+        // 运行：new Promise后原地留下一个Promise对象，承诺将来会返回一个成败/失败的结果给你返回使用
+        // 会理解执行new Promise()内所有代码
+        let p = new Promise((resolve, reject) => {
+            // resolve('成功的结果')
+            reject('失败的结果')
+        })
+        p.then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+        })
+    </script>
+</body>
+
+</html>

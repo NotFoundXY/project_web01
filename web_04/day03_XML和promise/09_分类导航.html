@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        axios({
+            url: ''
+        }).then(({ data: res }) => {
+            //对象结构
+            console.log(res);
+            // 渲染页面
+            let allOneCateListr = ''
+            //遍历数据 生成li标签字符串数组
+            let resultArr = res.data.map(obj => {
+                //二级分类数据
+                axios({
+                    url: '',
+                    params: {
+                        id: obj.id
+                    }
+                }).then(({ data: secondRes }) => {
+                    console.log(secondRes);
+                    return `<ul></ul>`
+                })
+
+            })
+            //一个新的数组['li标签'，'li标签']
+            // li标签字符串合并后 放入ul top中
+            document.querySelector('.top').innerHTML = resultArr.join('')
+
+            // 将二级分类数据都请求回来 用CSS方式做显示隐藏
+        })
+    </script>
+</body>
+
+</html>

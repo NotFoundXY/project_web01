@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 1.实例化对象
+        let xhr = new XMLHttpRequest()
+        // 2.调用Open方法
+        // 查询参数加url?xxx=xxx
+        xhr.open('GET', 'http://www.liulongbin.top:3006/api/getbooks')
+        // 设置请求头
+        // xhr.setRequestHeader('Content-Type', 'application/x-www-form-unlencoded')
+        // 3.发起请求
+        xhr.send()
+        // 请求体传参 三种类型 字符串(k-v)  JSON格式字符串   formdata
+        // 原生ajax把字符串默认当作普通文本Content-type:'text/plain'   导致后台不去拆分字符串
+        // 在open和send之际去哪天啊及情趣头内容类型
+        // xhr.send('bookname=冬牧场&author=李娟&publisher=北京)
+        // 4.检测load事件 等待结果
+        xhr.addEventListener('load', () => {
+            console.log(xhr.response);
+            // 后台返回JSON字符串
+            let result = JSON.parse(xhr.response)
+            console.log(result);
+        })
+    </script>
+</body>
+
+</html>

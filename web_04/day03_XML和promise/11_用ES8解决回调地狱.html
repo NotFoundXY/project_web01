@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function myAjax(url, fn) {
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', url)
+            xhr.send()
+            return xhr.addEventListener('load', () => {
+                let result = JSON.parse(xhr.response)
+                // 当return不出去的时候 解决方法 回调函数(在异步任务内)，可以通过他把结果带出来
+                // console.log(result);
+                fn(result)
+            })
+        }
+        //解决回调地狱 请求是一个个发送
+        const getListFn = async () => {
+            const res = await myAjax('url')
+            const pname = res.data[5]
+            const res2 = await myAjax('url?${pname}')
+            const cname = res2.data[9]
+            const res3 = await myAjax('url?${pname}&${cname}')
+            console.log(res3);
+        }
+        getListFn()
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+    <div>
+        <span> 用户名：</span>
+        <input type="text" id="username">
+    </div><br>
+    <div>
+        <span> 密 码：</span>
+        <input type="password" id="password">
+    </div><br>
+    <button type="submit" id="btnLogin">提交</button>
+    <script>
+        axios.defaults.baseURL = ''
+        document.querySelector('#btnLogin').addEventListener('click', e => {
+            // form-serialize需要form表单标签
+            let username = document.querySelector('#username').value
+            let password = document.querySelector('#password').value
+            axios({
+                url: '/api/login',
+                method: 'POST',
+                data: {
+                    // 新的知识点 对象可以简写  key和value名一致时可以简写
+                    username,
+                    password
+                }
+            }).then(res => {//响应码为2xx  3xx开头的会回调此函数
+                console.log(res);
+                alert(res.data.message)
+            }).catch(err => {//响应码为4xx  5xx开头的会回调此函数
+                console.dir(err);//dir打印详细信息
+                if (err.response.status === 500) {
+                    alert(err.response.data.message)
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

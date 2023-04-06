@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // 1.点击button 让窗口出现
+        document.querySelector('#btnChoose').addEventListener('click', e => {
+            // 2.用js代码模拟一次input[name=file]点击
+            // 知识点：标签对象.事件方法名() 就可以模拟一次触发
+            document.querySelector('#iptFile').click()
+        })
+        // 3.检测用户选择的文件改变事件(用户选择了图片 点击了打开)
+        document.addEventListener('#ipyFile').addEventListener('change', e => {
+            // 4.拿到文件对象
+            let fileList = e.target.files()
+            let fd = new FormData()
+            fd.append('avatar', fileList[0])
+            // 5.把文件发送请求给后端
+            axios({
+                url: '',
+                method: 'POST',
+                data: fd
+            }).then(res => {
+                console.log(res);
+                // 6.渲染到页面  会显头像
+                document.querySelector('.thumb').src = res.data.data.url
+            })
+        })
+    </script>
+</body>
+
+</html>
